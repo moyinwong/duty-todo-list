@@ -1,0 +1,5 @@
+.items-action-buttons {
+  position: absolute;
+  right: 0;
+  transform: translateY(-100%);
+}

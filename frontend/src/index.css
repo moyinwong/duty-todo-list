@@ -1,0 +1,17 @@
+body {
+  background-color: #f4f4f4;
+  margin-top: 50px;
+  font-family: "arial";
+}
+
+.w-100 {
+  width: 100% !important;
+}
+
+.m-0 {
+  margin: 0 !important;
+}
+
+.p-0 {
+  padding: 0 !important;
+}
