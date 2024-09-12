@@ -1,54 +1,55 @@
 import { FastifyPluginAsync, FastifyRequest } from "fastify";
-
-export type Duty = {
-  id: string;
-  name: string;
-};
-
-const duties = [
-  { id: "1", name: "Something to Do" },
-  { id: "2", name: "Go exercise" },
-  { id: "3", name: "Prepare for work" },
-  { id: "4", name: "Take care brother" },
-  { id: "5", name: "Play game" },
-  { id: "6", name: "Watch Netflix" },
-];
+import { DutyServiceImpl } from "../services/DutyService.js";
 
 type PutParams = {
   id: string;
 };
 
-type PutBody = {
+type PostPutBody = {
   dutyText: string;
 };
 
 const duty: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+  const dutyService = new DutyServiceImpl(fastify.pg.pool);
+
   fastify.get("/duties", async function (request, reply) {
-    return duties;
+    try {
+      return dutyService.findAll();
+    } catch (err) {
+      request.log.error(`Error occured - ${err}`);
+      return reply.internalServerError("Failed to find duties");
+    }
   });
 
-  fastify.post("/duties", async function (request, reply) {
-    const newDuty = {
-      id: (Number(duties[duties.length - 1]) + 1).toString(),
-      name: String(request.body),
-    };
-    duties.push(newDuty);
-    return newDuty;
-  });
+  fastify.post(
+    "/duties",
+    async function (request: FastifyRequest<{ Body: PostPutBody }>, reply) {
+      const { dutyText } = request.body;
+      try {
+        return dutyService.create(dutyText);
+      } catch (err) {
+        request.log.error(`Error occured - ${err}`);
+        return reply.internalServerError("Failed to add duty");
+      }
+    }
+  );
 
   fastify.put(
     "/duties/:id",
     async function (
-      request: FastifyRequest<{ Params: PutParams; Body: PutBody }>,
+      request: FastifyRequest<{ Params: PutParams; Body: PostPutBody }>,
       reply
     ) {
       const { id } = request.params;
-      const duty = duties.find((d) => d.id === id);
-      if (!duty) {
-        return reply.notFound();
+      const { dutyText } = request.body;
+
+      try {
+        return dutyService.updateById(id, dutyText);
+      } catch (err: any) {
+        const error = new Error(err);
+        request.log.error(`Error occured - ${error.message}`);
+        return reply.internalServerError("Failed to update duty");
       }
-      duty.name = request.body.dutyText;
-      return duty;
     }
   );
 };

@@ -3,6 +3,7 @@ import AutoLoad, { AutoloadPluginOptions } from "@fastify/autoload";
 import { FastifyPluginAsync } from "fastify";
 import { fileURLToPath } from "url";
 import cors from "@fastify/cors";
+import postgres from "@fastify/postgres";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -34,6 +35,14 @@ const app: FastifyPluginAsync<AppOptions> = async (
       // Generate an error on other origins, disabling access
       cb(new Error("Not allowed"), false);
     },
+  });
+
+  fastify.register(postgres, {
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    host: process.env.HOST,
+    port: parseInt(process.env.DB_HOST || "5432"),
   });
 
   // Do not touch the following lines

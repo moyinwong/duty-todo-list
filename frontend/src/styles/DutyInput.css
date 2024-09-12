@@ -1,16 +1,15 @@
-#duty-list {
-  background-color: white;
+#duty-input {
   width: 100%;
 }
 
 @media screen and (min-width: 1024px) {
-  #duty-list {
+  #duty-input {
     width: 80%;
   }
 }
 
 @media screen and (min-width: 1280px) {
-  #duty-list {
+  #duty-input {
     width: 50%;
   }
 }

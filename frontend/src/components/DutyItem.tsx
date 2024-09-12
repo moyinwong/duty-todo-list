@@ -1,5 +1,5 @@
 import { EditOutlined } from "@ant-design/icons";
-import { Button, Flex, Form, Input, InputRef } from "antd";
+import { App, Button, Flex, Form, Input, InputRef } from "antd";
 import {
   KeyboardEvent,
   SetStateAction,
@@ -8,7 +8,6 @@ import {
   useState,
 } from "react";
 import { updateDuty } from "../api/api";
-import "../styles/DutyItem.css";
 import { Duty } from "../types";
 
 type Props = {
@@ -18,8 +17,8 @@ type Props = {
 export default function DutyItem({ duty, setDuties }: Props) {
   const [isEdit, setIsEdit] = useState(false);
   const inputRef = useRef<InputRef>(null);
-
   const [form] = Form.useForm();
+  const { notification } = App.useApp();
 
   const initialValues = {
     [duty.id]: duty.name,
@@ -29,11 +28,20 @@ export default function DutyItem({ duty, setDuties }: Props) {
     await form.validateFields();
 
     const newValue = form.getFieldValue(duty.id);
-    const updatedDuty = await updateDuty(duty.id, newValue);
+    try {
+      const updatedDuty = await updateDuty(duty.id, newValue);
+      setDuties((prev) =>
+        prev.map((duty) => (duty.id === updatedDuty.id ? updatedDuty : duty))
+      );
+    } catch (err) {
+      if (err instanceof Error) {
+        notification.error({
+          message: "Error occurred",
+          description: err.message,
+        });
+      }
+    }
 
-    setDuties((prev) =>
-      prev.map((duty) => (duty.id === updatedDuty.id ? updatedDuty : duty))
-    );
     setIsEdit(false);
   };
 
