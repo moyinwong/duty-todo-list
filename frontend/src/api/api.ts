@@ -1,29 +1,36 @@
 import { Duty } from "../types";
 
-const duties = [
-  { id: "1", name: "Something to Do" },
-  { id: "2", name: "Go exercise" },
-  { id: "3", name: "Prepare for work" },
-  { id: "4", name: "Take care brother" },
-  { id: "5", name: "Play game" },
-  { id: "6", name: "Watch Netflix" },
-];
-export function getDuties(): Duty[] {
-  return duties;
+const DUTIES_ENDPOINT = `${process.env.REACT_APP_BACKEND_URL}/duties`;
+
+export async function getDuties(): Promise<Duty[]> {
+  const res = await fetch(DUTIES_ENDPOINT);
+  return res.json();
 }
 
-export function addDuty(dutyText: string) {
-  duties.push({
-    id: (Number(duties[duties.length - 1]) + 1).toString(),
-    name: dutyText,
+export async function addDuty(dutyText: string): Promise<Duty> {
+  const res = await fetch(DUTIES_ENDPOINT, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(dutyText),
   });
+  return res.json();
 }
 
-export function updateDuty(id: string, updateDuty: string) {
-  const duty = duties.find((d) => d.id == id);
-  if (duty) {
-    duty.name = updateDuty;
-  } else {
-    console.error("No duty found");
-  }
+export async function updateDuty(
+  id: string,
+  updateDutyText: string
+): Promise<Duty> {
+  const body = {
+    dutyText: updateDutyText,
+  };
+  const res = await fetch(`${DUTIES_ENDPOINT}/${id}`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  return res.json();
 }

@@ -1,30 +1,20 @@
-import { useEffect, useState } from "react";
-import { Button, Flex, Form, Input, List } from "antd";
-import TextInput from "./TextInput";
-import DutyItem from "./components/DutyItem";
-import { Duty } from "./types";
-import { addDuty, getDuties } from "./api/api";
+import { Button, Flex, Form, Input } from "antd";
 import Compact from "antd/es/space/Compact";
+import { useState } from "react";
+import { addDuty } from "./api/api";
 import DutyList from "./components/DutyList";
+import useDuties from "./hooks/useDuties";
 
 function App() {
   const [dutyText, setDutyText] = useState("");
-  const [count, setCount] = useState(0);
-  const [duties, setDuties] = useState<Duty[]>([]);
+  const { duties, setDuties } = useDuties();
 
-  const handleAddDuty = () => {
-    addDuty(dutyText);
+  const handleAddDuty = async () => {
+    const duty = await addDuty(dutyText);
+    setDuties((prev) => {
+      return [...prev, duty];
+    });
     setDutyText("");
-  };
-
-  useEffect(() => {
-    const items = getDuties();
-    setDuties(items);
-  }, []);
-
-  const validateMessages = {
-    required: "'${name}' is required!",
-    // ...
   };
 
   return (
@@ -55,7 +45,7 @@ function App() {
           </Form.Item>
         </Form>
 
-        <DutyList duties={duties} />
+        <DutyList duties={duties} setDuties={setDuties} />
       </Flex>
     </>
   );

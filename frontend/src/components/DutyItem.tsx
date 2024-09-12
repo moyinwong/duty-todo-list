@@ -1,14 +1,21 @@
 import { EditOutlined } from "@ant-design/icons";
 import { Button, Flex, Form, Input, InputRef } from "antd";
-import { KeyboardEvent, useEffect, useRef, useState } from "react";
+import {
+  KeyboardEvent,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { updateDuty } from "../api/api";
 import "../styles/DutyItem.css";
 import { Duty } from "../types";
 
 type Props = {
   duty: Duty;
+  setDuties: (func: SetStateAction<Duty[]>) => void;
 };
-export default function DutyItem({ duty }: Props) {
+export default function DutyItem({ duty, setDuties }: Props) {
   const [isEdit, setIsEdit] = useState(false);
   const inputRef = useRef<InputRef>(null);
 
@@ -19,10 +26,15 @@ export default function DutyItem({ duty }: Props) {
   };
 
   const handleUpdateDuty = async () => {
-    form.validateFields().then(() => {
-      updateDuty(duty.id, form.getFieldValue(duty.id));
-      setIsEdit(false);
-    });
+    await form.validateFields();
+
+    const newValue = form.getFieldValue(duty.id);
+    const updatedDuty = await updateDuty(duty.id, newValue);
+
+    setDuties((prev) =>
+      prev.map((duty) => (duty.id === updatedDuty.id ? updatedDuty : duty))
+    );
+    setIsEdit(false);
   };
 
   const handleClear = (e: KeyboardEvent) => {
