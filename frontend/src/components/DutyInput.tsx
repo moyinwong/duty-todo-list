@@ -16,19 +16,24 @@ export default function DutyInput({ handleAddDuty }: Props) {
   };
 
   return (
-    <Form onFinish={onAdd} id="duty-input">
+    <Form id="duty-input" onFinish={onAdd}>
       <Form.Item
         name="Duty"
         rules={[
-          {
-            required: true,
-            message: "Duty cannot be empty",
-          },
+          ({ getFieldValue }) => ({
+            validator(_, value) {
+              if (!value || getFieldValue("Duty").trim() === "") {
+                return Promise.reject(new Error("Duty cannot be empty"));
+              }
+              return Promise.resolve();
+            },
+          }),
         ]}
         validateTrigger="onSubmit"
       >
         <Compact className="w-100">
           <Input
+            aria-label="Add Duty"
             placeholder="Add Duty"
             value={dutyText}
             onChange={(e) => setDutyText(e.target.value)}

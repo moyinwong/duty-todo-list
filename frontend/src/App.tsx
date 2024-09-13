@@ -11,9 +11,7 @@ function MyApp() {
   const handleAddDuty = async (dutyText: string) => {
     try {
       const duty = await addDuty(dutyText);
-      setDuties((prev) => {
-        return [...prev, duty];
-      });
+      setDuties([...duties, duty]);
     } catch (err) {
       if (err instanceof Error) {
         notification.error({

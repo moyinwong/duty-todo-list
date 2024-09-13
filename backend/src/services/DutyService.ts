@@ -13,7 +13,9 @@ export class DutyServiceImpl implements DutyService {
   async findAll(): Promise<Duty[]> {
     const client = await this.dbConnectionPool.connect();
     try {
-      const { rows } = await client.query(`SELECT * FROM duties`);
+      const { rows } = await client.query(
+        `SELECT * FROM duties d ORDER BY d.id`
+      );
       return rows;
     } catch (err) {
       throw err;

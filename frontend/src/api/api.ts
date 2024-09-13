@@ -27,7 +27,7 @@ export async function addDuty(dutyText: string): Promise<Duty> {
   return result;
 }
 
-export async function updateDuty(id: string, dutyText: string): Promise<Duty> {
+export async function updateDuty(id: number, dutyText: string): Promise<Duty> {
   const res = await fetch(`${DUTIES_ENDPOINT}/${id}`, {
     method: "PUT",
     headers: {

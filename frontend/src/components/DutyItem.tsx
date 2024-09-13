@@ -27,7 +27,6 @@ export default function DutyItem({ duty, setDuties }: Props) {
 
   const handleUpdateDuty = async () => {
     const newValue: string = form.getFieldValue(duty.id);
-    form.setFieldValue(duty.id, newValue.trim());
 
     try {
       await form.validateFields();
@@ -53,7 +52,7 @@ export default function DutyItem({ duty, setDuties }: Props) {
       }
     }
 
-    setIsEdit(false);
+    onCancel();
   };
 
   const handleClear = (e: KeyboardEvent) => {
@@ -67,9 +66,6 @@ export default function DutyItem({ duty, setDuties }: Props) {
   };
 
   const onCancel = () => {
-    // in case input is entire empty spaces
-    // revert back to original text
-    form.setFieldValue(duty.id, duty.name);
     setIsEdit(false);
   };
 
@@ -92,10 +88,14 @@ export default function DutyItem({ duty, setDuties }: Props) {
             className="m-0"
             name={duty.id}
             rules={[
-              {
-                required: true,
-                message: "Duty cannot be empty",
-              },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue(duty.id).trim() === "") {
+                    return Promise.reject(new Error("Duty cannot be empty"));
+                  }
+                  return Promise.resolve();
+                },
+              }),
             ]}
             validateTrigger={["onSubmit", "onBlur"]}
           >
