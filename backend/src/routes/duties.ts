@@ -1,4 +1,4 @@
-import { FastifyPluginAsync, FastifyRequest } from "fastify";
+import { FastifyPluginAsync, FastifyRequest, FastifySchema } from "fastify";
 import { DutyServiceImpl } from "../services/DutyService.js";
 
 type PutParams = {
@@ -7,6 +7,31 @@ type PutParams = {
 
 type PostPutBody = {
   dutyText: string;
+};
+
+const bodyJsonSchema = {
+  type: "object",
+  required: ["dutyText"],
+  properties: {
+    dutyText: { type: "string" },
+  },
+};
+
+const paramsJsonSchema = {
+  type: "object",
+  required: ["id"],
+  properties: {
+    id: { type: "string" },
+  },
+};
+
+const PutSchema: FastifySchema = {
+  body: bodyJsonSchema,
+  params: paramsJsonSchema,
+};
+
+const PostSchema: FastifySchema = {
+  body: bodyJsonSchema,
 };
 
 const duty: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
@@ -23,7 +48,8 @@ const duty: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
   fastify.post(
     "/duties",
-    async function (request: FastifyRequest<{ Body: PostPutBody }>, reply) {
+    { schema: PostSchema },
+    async (request: FastifyRequest<{ Body: PostPutBody }>, reply) => {
       const { dutyText } = request.body;
       try {
         return dutyService.create(dutyText);
@@ -36,18 +62,18 @@ const duty: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
 
   fastify.put(
     "/duties/:id",
-    async function (
+    { schema: PutSchema },
+    async (
       request: FastifyRequest<{ Params: PutParams; Body: PostPutBody }>,
       reply
-    ) {
+    ) => {
       const { id } = request.params;
       const { dutyText } = request.body;
 
       try {
         return dutyService.updateById(id, dutyText);
-      } catch (err: any) {
-        const error = new Error(err);
-        request.log.error(`Error occured - ${error.message}`);
+      } catch (err) {
+        request.log.error(`Error occured - ${err}`);
         return reply.internalServerError("Failed to update duty");
       }
     }

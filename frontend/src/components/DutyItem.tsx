@@ -14,6 +14,7 @@ type Props = {
   duty: Duty;
   setDuties: (func: SetStateAction<Duty[]>) => void;
 };
+
 export default function DutyItem({ duty, setDuties }: Props) {
   const [isEdit, setIsEdit] = useState(false);
   const inputRef = useRef<InputRef>(null);
@@ -25,9 +26,19 @@ export default function DutyItem({ duty, setDuties }: Props) {
   };
 
   const handleUpdateDuty = async () => {
-    await form.validateFields();
+    const newValue: string = form.getFieldValue(duty.id);
+    form.setFieldValue(duty.id, newValue.trim());
 
-    const newValue = form.getFieldValue(duty.id);
+    try {
+      await form.validateFields();
+    } catch (err) {
+      // validation error, ignore
+      if (err && typeof err === "object" && "errorFields" in err) {
+        return;
+      }
+      throw err;
+    }
+
     try {
       const updatedDuty = await updateDuty(duty.id, newValue);
       setDuties((prev) =>
@@ -47,12 +58,19 @@ export default function DutyItem({ duty, setDuties }: Props) {
 
   const handleClear = (e: KeyboardEvent) => {
     if (e.key === "Escape") {
-      setIsEdit(false);
+      onCancel();
     }
   };
 
   const handleEdit = () => {
     setIsEdit(true);
+  };
+
+  const onCancel = () => {
+    // in case input is entire empty spaces
+    // revert back to original text
+    form.setFieldValue(duty.id, duty.name);
+    setIsEdit(false);
   };
 
   useEffect(() => {
@@ -93,7 +111,7 @@ export default function DutyItem({ duty, setDuties }: Props) {
                     <Button danger type="primary" htmlType="submit">
                       Update
                     </Button>
-                    <Button onClick={() => setIsEdit(false)}>X</Button>
+                    <Button onClick={onCancel}>X</Button>
                   </Flex>
                 </Flex>
               }
