@@ -1,5 +1,5 @@
 import { Button, Form, Input } from "antd";
-import Compact from "antd/es/space/Compact";
+import Compact from "antd/lib/space/Compact";
 import { useState } from "react";
 import "../styles/DutyInput.css";
 
