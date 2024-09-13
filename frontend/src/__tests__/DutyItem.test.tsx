@@ -95,4 +95,19 @@ describe("DutyItem component", () => {
       expect(screen.getByText("Duty cannot be empty")).toBeInTheDocument();
     });
   });
+
+  test("should not make any update if user type new input and then press escape", async () => {
+    const updateSpy = jest.spyOn(api, "updateDuty");
+    render(<DutyItem duty={duty} setDuties={setDuties} />);
+
+    const editButton = screen.getByLabelText("edit");
+    await userEvent.click(editButton);
+
+    const input = screen.getByPlaceholderText(/add duty/i);
+    await fireEvent.change(input, { target: { value: "Updated Duty" } });
+    await userEvent.keyboard("[Escape]");
+
+    expect(updateSpy).not.toHaveBeenCalled();
+    expect(screen.getByText(duty.name)).toBeInTheDocument();
+  });
 });
