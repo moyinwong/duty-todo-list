@@ -41,8 +41,8 @@ const app: FastifyPluginAsync<AppOptions> = async (
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
-    host: process.env.HOST,
-    port: parseInt(process.env.DB_HOST || "5432"),
+    host: process.env.DB_HOST,
+    port: parseInt(process.env.DB_PORT || "5432"),
   });
 
   // This loads all plugins defined in plugins
