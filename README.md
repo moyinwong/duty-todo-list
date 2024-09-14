@@ -1,3 +1,5 @@
+This an end-to-end web application that allows the user to read, create and update a to-do list of duties.
+
 # Prerequisite
 
 - Node.js `v20`
@@ -23,6 +25,9 @@ yarn install
 ```
 yarn dev
 ```
+
+Frontend should be running at [http://localhost:5173/](http://localhost:5173/)
+<img width="1388" alt="Screenshot 2024-09-14 at 11 02 18 AM" src="https://github.com/user-attachments/assets/f3a812b6-f5d8-48fa-a341-24d62153cf69">
 
 **Test**
 
