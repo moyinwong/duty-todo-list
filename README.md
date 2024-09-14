@@ -42,18 +42,17 @@ Configure PostgreSQL settings by updating `.env` (refer to `.env.example`).
 
 Ensure user and database that will be used is created.
 
-**Run migration**
-
-```
-yarn mi
-```
-
 **Install Dependencies**
 
 ```sh
 cd backend
-yarn mi
 yarn install
+```
+
+**Run migration**
+
+```
+yarn mi
 ```
 
 **Run**

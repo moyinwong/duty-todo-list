@@ -24,6 +24,11 @@ export default function DutyItem({
     [duty.id]: duty.name,
   };
 
+  // TODO: force form have field value, investigate why form initialvalues not updating
+  useEffect(() => {
+    form.setFieldValue(duty.id, duty.name);
+  }, [form, duty]);
+
   const onUpdateDuty = async () => {
     const newValue: string = form.getFieldValue(duty.id);
 
