@@ -24,11 +24,6 @@ export default function DutyItem({
     [duty.id]: duty.name,
   };
 
-  // TODO: force form have field value, investigate why form initialvalues not updating
-  useEffect(() => {
-    form.setFieldValue(duty.id, duty.name);
-  }, [form, duty]);
-
   const onUpdateDuty = async () => {
     const newValue: string = form.getFieldValue(duty.id);
 
@@ -92,8 +87,10 @@ export default function DutyItem({
   useEffect(() => {
     if (isEdit && inputRef.current) {
       inputRef.current?.focus();
+      // form not getting latest value after update so manual update here
+      form.setFieldValue(duty.id, duty.name);
     }
-  }, [isEdit]);
+  }, [isEdit, form, duty]);
 
   return (
     <>
