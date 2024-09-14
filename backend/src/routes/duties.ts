@@ -34,7 +34,7 @@ const PostSchema: FastifySchema = {
   body: bodyJsonSchema,
 };
 
-const duty: FastifyPluginAsync = async (fastify, opts): Promise<void> => {
+const duty: FastifyPluginAsync = async (fastify): Promise<void> => {
   const dutyService = new DutyServiceImpl(fastify.pg.pool);
 
   fastify.get("/duties", async function (request, reply) {

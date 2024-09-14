@@ -45,8 +45,6 @@ const app: FastifyPluginAsync<AppOptions> = async (
     port: parseInt(process.env.DB_HOST || "5432"),
   });
 
-  // Do not touch the following lines
-
   // This loads all plugins defined in plugins
   // those should be support plugins that are reused
   // through your application

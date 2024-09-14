@@ -1,12 +1,14 @@
-import { test } from 'node:test'
-import * as assert from 'node:assert'
-import { build } from '../helper.js'
+import Fastify from "fastify";
+import Root from "../../src/routes/root";
 
-test('default root route', async (t) => {
-  const app = await build(t)
+describe("root route", () => {
+  test("should resolve to root", async () => {
+    const fastify = Fastify();
+    fastify.register(Root);
 
-  const res = await app.inject({
-    url: '/'
-  })
-  assert.deepStrictEqual(JSON.parse(res.payload), { root: true })
-})
+    const res = await fastify.inject({
+      url: "/",
+    });
+    expect(JSON.parse(res.payload)).toEqual({ root: true });
+  });
+});
