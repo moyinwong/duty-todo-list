@@ -44,3 +44,18 @@ export async function updateDuty(id: number, dutyText: string): Promise<Duty> {
   }
   return result;
 }
+
+export async function deleteDuty(id: number): Promise<Duty> {
+  const res = await fetch(`${DUTIES_ENDPOINT}/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  const result = await res.json();
+  if (!res.ok) {
+    throw new Error(result.message);
+  }
+  return result;
+}

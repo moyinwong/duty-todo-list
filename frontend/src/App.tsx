@@ -3,6 +3,7 @@ import { addDuty } from "./api/api";
 import DutyInput from "./components/DutyInput";
 import DutyList from "./components/DutyList";
 import useDuties from "./hooks/useDuties";
+import { Duty } from "./types";
 
 function MyApp() {
   const { duties, setDuties } = useDuties();
@@ -22,10 +23,23 @@ function MyApp() {
     }
   };
 
+  const handleUpdateDuty = (updatedDuty: Duty) => {
+    setDuties((prev) =>
+      prev.map((duty) => (duty.id === updatedDuty.id ? updatedDuty : duty))
+    );
+  };
+  const handleDeleteDuty = (deletedDutyId: number) => {
+    setDuties(duties.filter((d) => d.id !== deletedDutyId));
+  };
+
   return (
     <Flex justify="center" align="center" gap={25} vertical>
       <DutyInput handleAddDuty={handleAddDuty} />
-      <DutyList duties={duties} setDuties={setDuties} />
+      <DutyList
+        duties={duties}
+        handleUpdateDuty={handleUpdateDuty}
+        handleDeleteDuty={handleDeleteDuty}
+      />
     </Flex>
   );
 }

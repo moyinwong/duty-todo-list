@@ -78,6 +78,25 @@ const duty: FastifyPluginAsync = async (fastify): Promise<void> => {
       }
     }
   );
+
+  fastify.delete(
+    "/duties/:id",
+    { schema: { params: paramsJsonSchema } },
+    async (
+      request: FastifyRequest<{ Params: PutParams; Body: PostPutBody }>,
+      reply
+    ) => {
+      const { id } = request.params;
+
+      try {
+        await dutyService.deleteById(id);
+        return { message: "deleted" };
+      } catch (err) {
+        request.log.error(`Error occured - ${err}`);
+        return reply.internalServerError("Failed to delete duty");
+      }
+    }
+  );
 };
 
 export default duty;

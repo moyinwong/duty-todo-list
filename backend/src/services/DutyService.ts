@@ -5,6 +5,7 @@ export interface DutyService {
   findAll(): Promise<Duty[]>;
   create(dutyText: string): Promise<Duty>;
   updateById(id: string, dutyText: string): Promise<Duty>;
+  deleteById(id: string): Promise<void>;
 }
 
 export class DutyServiceImpl implements DutyService {
@@ -45,6 +46,17 @@ export class DutyServiceImpl implements DutyService {
         [dutyText, id]
       );
       return rows[0];
+    } catch (err) {
+      throw err;
+    } finally {
+      client.release();
+    }
+  }
+
+  async deleteById(id: string): Promise<void> {
+    const client = await this.dbConnectionPool.connect();
+    try {
+      await client.query(`DELETE FROM duties WHERE id = $1`, [id]);
     } catch (err) {
       throw err;
     } finally {

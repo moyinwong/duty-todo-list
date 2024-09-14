@@ -1,21 +1,20 @@
-import { EditOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { App, Button, Flex, Form, Input, InputRef } from "antd";
-import {
-  KeyboardEvent,
-  SetStateAction,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { updateDuty } from "../api/api";
+import { KeyboardEvent, useEffect, useRef, useState } from "react";
+import { deleteDuty, updateDuty } from "../api/api";
 import { Duty } from "../types";
 
 type Props = {
   duty: Duty;
-  setDuties: (func: SetStateAction<Duty[]>) => void;
+  handleUpdateDuty: (duty: Duty) => void;
+  handleDeleteDuty: (dutyId: number) => void;
 };
 
-export default function DutyItem({ duty, setDuties }: Props) {
+export default function DutyItem({
+  duty,
+  handleUpdateDuty,
+  handleDeleteDuty,
+}: Props) {
   const [isEdit, setIsEdit] = useState(false);
   const inputRef = useRef<InputRef>(null);
   const [form] = Form.useForm();
@@ -25,7 +24,7 @@ export default function DutyItem({ duty, setDuties }: Props) {
     [duty.id]: duty.name,
   };
 
-  const handleUpdateDuty = async () => {
+  const onUpdateDuty = async () => {
     const newValue: string = form.getFieldValue(duty.id);
 
     try {
@@ -40,9 +39,7 @@ export default function DutyItem({ duty, setDuties }: Props) {
 
     try {
       const updatedDuty = await updateDuty(duty.id, newValue);
-      setDuties((prev) =>
-        prev.map((duty) => (duty.id === updatedDuty.id ? updatedDuty : duty))
-      );
+      handleUpdateDuty(updatedDuty);
     } catch (err) {
       if (err instanceof Error) {
         notification.error({
@@ -66,7 +63,25 @@ export default function DutyItem({ duty, setDuties }: Props) {
   };
 
   const onCancel = () => {
+    // need to reset original value if input is empty and cancel edit
+    form.setFieldValue(duty.id, duty.name);
     setIsEdit(false);
+  };
+
+  const onDelete = async () => {
+    try {
+      await deleteDuty(duty.id);
+      handleDeleteDuty(duty.id);
+    } catch (err) {
+      if (err instanceof Error) {
+        notification.error({
+          message: "Error occurred",
+          description: err.message,
+        });
+      }
+    }
+
+    onCancel();
   };
 
   useEffect(() => {
@@ -82,7 +97,7 @@ export default function DutyItem({ duty, setDuties }: Props) {
           form={form}
           className="w-100"
           initialValues={initialValues}
-          onFinish={handleUpdateDuty}
+          onFinish={onUpdateDuty}
         >
           <Form.Item
             className="m-0"
@@ -102,13 +117,16 @@ export default function DutyItem({ duty, setDuties }: Props) {
             <Input
               ref={inputRef}
               placeholder="Add Duty"
-              onPressEnter={handleUpdateDuty}
+              onPressEnter={onUpdateDuty}
               onKeyDown={handleClear}
               onChange={(e) => form.setFieldValue(duty.id, e.target.value)}
               suffix={
                 <Flex justify="space-between" align="center" gap={20}>
                   <Flex gap={4}>
-                    <Button danger type="primary" htmlType="submit">
+                    <Button danger onClick={onDelete}>
+                      <DeleteOutlined />
+                    </Button>
+                    <Button type="primary" ghost htmlType="submit">
                       Update
                     </Button>
                     <Button onClick={onCancel}>X</Button>

@@ -1,14 +1,18 @@
 import { List } from "antd";
+import "../styles/DutyList.css";
 import { Duty } from "../types";
 import DutyItem from "./DutyItem";
-import "../styles/DutyList.css";
-import { SetStateAction } from "react";
 
 type Props = {
   duties: Duty[];
-  setDuties: (func: SetStateAction<Duty[]>) => void;
+  handleUpdateDuty: (duty: Duty) => void;
+  handleDeleteDuty: (dutyId: number) => void;
 };
-export default function DutyList({ duties, setDuties }: Props) {
+export default function DutyList({
+  duties,
+  handleUpdateDuty,
+  handleDeleteDuty,
+}: Props) {
   return (
     <>
       <h3>Duties list:</h3>
@@ -19,7 +23,11 @@ export default function DutyList({ duties, setDuties }: Props) {
         dataSource={duties}
         renderItem={(item) => (
           <List.Item>
-            <DutyItem duty={item} setDuties={setDuties} />
+            <DutyItem
+              duty={item}
+              handleUpdateDuty={handleUpdateDuty}
+              handleDeleteDuty={handleDeleteDuty}
+            />
           </List.Item>
         )}
       />

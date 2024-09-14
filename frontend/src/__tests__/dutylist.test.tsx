@@ -9,8 +9,15 @@ describe("DutyList component", () => {
       { id: 2, name: "Duty 2" },
     ];
 
-    const setDuties = jest.fn();
-    render(<DutyList duties={duties} setDuties={setDuties} />);
+    const handleUpdateDuty = jest.fn();
+    const handleDeletDuty = jest.fn();
+    render(
+      <DutyList
+        duties={duties}
+        handleUpdateDuty={handleUpdateDuty}
+        handleDeleteDuty={handleDeletDuty}
+      />
+    );
 
     expect(screen.getByText("Duty 1")).toBeInTheDocument();
     expect(screen.getByText("Duty 2")).toBeInTheDocument();

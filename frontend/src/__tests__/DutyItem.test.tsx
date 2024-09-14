@@ -5,7 +5,8 @@ import * as api from "../api/api";
 
 describe("DutyItem component", () => {
   const duty = { id: 1, name: "Initial Duty" };
-  const setDuties = jest.fn();
+  const handleUpdateDuty = jest.fn();
+  const handleDeletDuty = jest.fn();
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -16,7 +17,13 @@ describe("DutyItem component", () => {
       ...duty,
       name: "Something Duty",
     });
-    render(<DutyItem duty={duty} setDuties={setDuties} />);
+    render(
+      <DutyItem
+        duty={duty}
+        handleUpdateDuty={handleUpdateDuty}
+        handleDeleteDuty={handleDeletDuty}
+      />
+    );
 
     const editButton = screen.getByLabelText("edit");
     await userEvent.click(editButton);
@@ -35,7 +42,13 @@ describe("DutyItem component", () => {
       ...duty,
       name: "Updated Duty",
     });
-    render(<DutyItem duty={duty} setDuties={setDuties} />);
+    render(
+      <DutyItem
+        duty={duty}
+        handleUpdateDuty={handleUpdateDuty}
+        handleDeleteDuty={handleDeletDuty}
+      />
+    );
 
     const editButton = screen.getByLabelText("edit");
     await userEvent.click(editButton);
@@ -53,7 +66,13 @@ describe("DutyItem component", () => {
       ...duty,
       name: "Updated Duty",
     });
-    render(<DutyItem duty={duty} setDuties={setDuties} />);
+    render(
+      <DutyItem
+        duty={duty}
+        handleUpdateDuty={handleUpdateDuty}
+        handleDeleteDuty={handleDeletDuty}
+      />
+    );
 
     const editButton = screen.getByLabelText("edit");
     await userEvent.click(editButton);
@@ -65,7 +84,13 @@ describe("DutyItem component", () => {
   });
 
   test("should not allow to update duty when click update button if updated input is empty", async () => {
-    render(<DutyItem duty={duty} setDuties={setDuties} />);
+    render(
+      <DutyItem
+        duty={duty}
+        handleUpdateDuty={handleUpdateDuty}
+        handleDeleteDuty={handleDeletDuty}
+      />
+    );
 
     const editButton = screen.getByLabelText("edit");
     await userEvent.click(editButton);
@@ -82,7 +107,13 @@ describe("DutyItem component", () => {
   });
 
   test("should not allow to update duty when pressing enter if updated input is empty", async () => {
-    render(<DutyItem duty={duty} setDuties={setDuties} />);
+    render(
+      <DutyItem
+        duty={duty}
+        handleUpdateDuty={handleUpdateDuty}
+        handleDeleteDuty={handleDeletDuty}
+      />
+    );
 
     const editButton = screen.getByLabelText("edit");
     await userEvent.click(editButton);
@@ -98,7 +129,13 @@ describe("DutyItem component", () => {
 
   test("should not make any update if user type new input and then press escape", async () => {
     const updateSpy = jest.spyOn(api, "updateDuty");
-    render(<DutyItem duty={duty} setDuties={setDuties} />);
+    render(
+      <DutyItem
+        duty={duty}
+        handleUpdateDuty={handleUpdateDuty}
+        handleDeleteDuty={handleDeletDuty}
+      />
+    );
 
     const editButton = screen.getByLabelText("edit");
     await userEvent.click(editButton);
